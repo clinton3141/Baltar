@@ -1,0 +1,29 @@
+{% include 'includes/header.html.twig' %}
+
+<h1>Editing: {{ checker.name }}</h1>
+
+<form method="post" action="/dashboard/checker/save">
+	<input type="hidden" name="id" value="{{ checker.id }}" />
+	<p>Name:
+	<input type="text" name="name" value="{{ checker.name }}" />
+	</p>
+	<p>Url: 
+	<input type="text" name="url" value="{{ checker.url }}" />
+	</p>
+	<p>Text to check for:
+	<input type="text" name="text" value="{{ checker.text }}" />
+	</p>
+	<p>Invert match (get emailed when the text disappears) 
+	{% if checker.invert %}
+	<input checked="checked" type="checkbox" name="invert" />
+	{% else %}
+	<input type="checkbox" name="invert" />
+	{% endif %}
+	</p>
+	<p>
+	<input type="submit" value="save" />
+	</p>
+</form>
+
+{% include 'includes/footer.html.twig' %}
+

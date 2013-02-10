@@ -1,5 +1,19 @@
 {
 	"require": {
-		"silex/silex": "1.0.*@dev"
+		"doctrine/orm": "*",
+		"silex/silex": "1.0.*@dev",
+		"symfony/security": "2.1.*",
+		"symfony/class-loader": "2.1.*",
+		"symfony/form": "2.1.*",
+		"symfony/security": "2.1.*",
+		"symfony/twig-bridge": "2.1.*",
+		"symfony/translation": "2.1.*",
+		"symfony/validator": "2.1.*",
+		"twig/twig": "1.*"
+	},
+	"autoload": {
+		"psr-0": {
+			"Seer": "src"
+		}
 	}
 }

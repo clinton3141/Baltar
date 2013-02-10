@@ -1,0 +1,12 @@
+{% include 'includes/header.html.twig' %}
+
+<h1>Your checkers</h1>
+
+<ul>
+	{% for checker in checkers %}
+	<li><a href="/dashboard/view/{{ checker.id }}">{{ checker.name }}</a></li>
+	{% endfor %}
+</ul>
+
+{% include 'includes/footer.html.twig' %}
+

@@ -1,0 +1,14 @@
+{% include 'includes/header.html.twig' %}
+
+
+{% if is_granted('ROLE_USER') %}
+<h2>You're logged in.</h2>
+<p>Why not go and <a href="/dashboard">see what checkers you've got</a>?</p>
+{% else %}
+<h1>Welcome!</h1>
+
+<p>You need to <a href="/login">login</a> to see your checkers</p>
+{% endif %}
+
+{% include 'includes/footer.html.twig' %}
+
