@@ -91,7 +91,13 @@ $app->get('/dashboard', function() use ($app) {
 });
 
 $app->get('/dashboard/view/{id}', function($id) use ($app) {
-	$checker = $app['checkers']->getCheckerById($id);
+	$username = $app['security']->getToken()->getUser()->getUserName();
+
+	try {
+		$checker = $app['checkers']->getCheckerByIdAndUserName($id, $username);
+	} catch (Exception $e) {
+		return "You don't have access to this page.";
+	}
 
 	return $app['twig']->render('single-checker.html.twig', array (
 		'checker' => $checker
