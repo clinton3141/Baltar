@@ -64,10 +64,6 @@ $app['checkers'] = $app->share(function() use ($app) {
 
 
 // controllers
-$app->match('/generate/{password}', function($password) use ($app) {
-	echo $app['security.encoder.digest']->encodePassword($password, '');
-	return true;
-});
 
 $app->get('/login', function(Request $request) use ($app) {
 	return $app['twig']->render('login.html.twig', array(
@@ -150,5 +146,32 @@ $app->post('/dashboard/checker/delete/{id}', function(Request $request, $id) use
 	}
 	return $app->redirect('/dashboard');
 });
+
+$app->get('/dashboard/profile', function () use ($app) {
+	$user = $app['security']->getToken()->getUser();
+	return $app['twig']->render('profile.html.twig', array(
+		'user' => $user
+	));
+});
+
+$app->post('/dashboard/profile/save', function (Request $request) use ($app) {
+	if ($request->get('password')) {
+		$username = $app['security']->getToken()->getUser()->getUserName();
+
+		$password = $app['security.encoder.digest']->encodePassword($request->get('password'), '');
+		$app['db']->update('users', array(
+			'password' => $password
+		), array (
+			'username' => $username
+		));
+	}
+	return $app->redirect('/dashboard');
+});
+
+$app->match('/generate/{password}', function($password) use ($app) {
+	echo $app['security.encoder.digest']->encodePassword($password, '');
+	return true;
+});
+
 
 return $app;

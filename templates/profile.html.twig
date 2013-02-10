@@ -1,0 +1,18 @@
+{% include 'includes/header.html.twig' %}
+
+<h1>My profile</h1>
+
+<form method="post" action="/dashboard/profile/save">
+	<p>My username: {{ user.username }}</p>
+	</p>
+	<p>New password:
+	<input type="password" name="password" />
+	</p>
+	<p>
+	<button type="submit" class="btn btn-success">Save</button>
+	<a class="btn" href="/dashboard">Cancel</a>
+	</p>
+</form>
+
+{% include 'includes/footer.html.twig' %}
+
