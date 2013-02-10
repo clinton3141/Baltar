@@ -174,9 +174,13 @@ $app->post('/dashboard/profile/save', function (Request $request) use ($app) {
 	return $app->redirect('/dashboard');
 });
 
-$app->match('/generate/{password}', function($password) use ($app) {
-	echo $app['security.encoder.digest']->encodePassword($password, '');
-	return true;
+$app->get('/service-status', function () use ($app) {
+
+
+	return $app['twig']->render('service-status.html.twig', array(
+		'frontend' => true,
+		'checker' => strpos(file_get_contents('http://127.0.0.1:5338'), 'All systems go') !== false
+	));
 });
 
 
