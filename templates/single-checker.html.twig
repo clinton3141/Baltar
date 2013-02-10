@@ -14,14 +14,15 @@
 	<input type="text" name="text" value="{{ checker.text }}" />
 	</p>
 	<p>Invert match (get emailed when the text disappears) 
-	{% if checker.invert %}
-	<input checked="checked" type="checkbox" name="invert" />
-	{% else %}
-	<input type="checkbox" name="invert" />
-	{% endif %}
+	<input {% if checker.invert %}checked="checked" {% endif %} type="checkbox" name="invert" />
+	</p>
+	<p>Active?
+	<input {% if checker.is_active %}checked="checked"{% endif %} type="checkbox" name="is_active" />
 	</p>
 	<p>
-	<input type="submit" value="save" />
+	<button type="submit" class="btn btn-success">Save</button>
+	<a class="btn btn-danger" href="/dashboard/checker/delete/{{ checker.id }}">Delete</a>
+	<a class="btn" href="/dashboard">Cancel</a>
 	</p>
 </form>
 

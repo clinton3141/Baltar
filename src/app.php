@@ -58,6 +58,10 @@ $app->register(new TwigServiceProvider(), array (
 	'twig.options' => array('cache' => __DIR__ . '/../cache')
 ));
 
+$app['checkers'] = $app->share(function() use ($app) {
+	return new Seer\Checker\CheckerProvider($app['db']);
+});
+
 
 // controllers
 $app->match('/generate/{password}', function($password) use ($app) {
@@ -77,24 +81,30 @@ $app->get('/', function () use ($app) {
 });
 
 $app->get('/dashboard', function() use ($app) {
-	$token = $app['security']->getToken();
-	if ($token !== null) {
-		$user = $token->getUser();
-	}
-	$query = 'SELECT * FROM checkers WHERE user_id = (SELECT id FROM users WHERE username = ?)';
+	$username = $app['security']->getToken()->getUser()->getUserName();
 
-	$checkers = $app['db']->fetchAll($query, array($user->getUsername()));
+	try {
+		$checkers = $app['checkers']->getCheckersByUserName($username);
+	} catch (Seer\Checker\CheckerNotFoundException $e) {
+		$checkers = array ();
+	}
+
 	return $app['twig']->render('dashboard.html.twig', array (
 		'checkers' => $checkers
 	));
 });
 
 $app->get('/dashboard/view/{id}', function($id) use ($app) {
-	$query = 'SELECT * FROM checkers WHERE id = ?';
-	$checker = $app['db']->fetchAssoc($query, array($id));
+	$checker = $app['checkers']->getCheckerById($id);
+
 	return $app['twig']->render('single-checker.html.twig', array (
 		'checker' => $checker
 	));
+});
+
+
+$app->get('/dashboard/create', function() use ($app) {
+	return $app['twig']->render('create-checker.html.twig');
 });
 
 $app->get('/account/logout', function() use ($app) {
@@ -104,16 +114,41 @@ $app->get('/account/logout', function() use ($app) {
 $app->post('/dashboard/checker/save', function (Request $request) use ($app) {
 	// TODO: if (checker->belongsTo(user))
 	// $checker->update()
-	return $request->get('id');
+	$username = $app['security']->getToken()->getUser()->getUserName();
 
-	$app['db']->update('checkers', array('id' => $request->get('id')), array(
-		'name' => $request->get('name'),
-		'url' => $request->get('url'),
-		'text' => $request->get('text'),
-		'invert' => $request->get('invert') ? 1 : 0
+	if ($request->get('id') !== null) {
+		$checker = $app['checkers']->getCheckerByIdAndUserName($request->get('id'), $username);
+	} else {
+		$checker = $app['checkers']->createCheckerForUserName ($username);
+	}
+
+	$checker->name = $request->get('name');
+	$checker->url = $request->get('url');
+	$checker->text = $request->get('text');
+	$checker->invert = $request->get('invert') ? true : false;
+	$checker->is_active = $request->get('is_active') ? true : false;
+
+	$checker->save($app['db']);
+
+	return $app->redirect('/dashboard/view/' . $checker->id());
+});
+
+$app->get('/dashboard/checker/delete/{id}', function ($id) use ($app) {
+	$username = $app['security']->getToken()->getUser()->getUserName();
+	$checker = $app['checkers']->getCheckerByIdAndUserName($id, $username);
+
+	return $app['twig']->render('delete-checker.html.twig', array (
+		'checker' => $checker
 	));
+});
 
-	return $app->redirect('/dashboard/view/' . $request->get('id'));
+$app->post('/dashboard/checker/delete/{id}', function(Request $request, $id) use ($app) {
+	$username = $app['security']->getToken()->getUser()->getUserName();
+	if ($request->get('submit') === 'yes') {
+		$checker = $app['checkers']->getCheckerByIdAndUserName($id, $username);
+		$app['db']->delete('checkers', array('id' => $checker->id()));
+	}
+	return $app->redirect('/dashboard');
 });
 
 return $app;

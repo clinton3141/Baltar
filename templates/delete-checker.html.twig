@@ -1,0 +1,11 @@
+{% include 'includes/header.html.twig' %}
+
+<h1>Delete: {{ checker.name }}?</h1>
+
+<form method="post" action="/dashboard/checker/delete/{{ checker.id }}">
+	<button class="btn" type="submit" name="submit" value="no">No</button>
+	<button class="btn btn-danger" type="submit" name="submit" value="yes">Yes</button>
+</form>
+
+{% include 'includes/footer.html.twig' %}
+

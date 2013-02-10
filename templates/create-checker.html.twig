@@ -1,0 +1,25 @@
+{% include 'includes/header.html.twig' %}
+
+<h1>Create a new checker</h1>
+
+<form method="post" action="/dashboard/checker/save">
+	<p>Name:
+	<input type="text" name="name" value="" />
+	</p>
+	<p>Url: 
+	<input type="text" name="url" value="" />
+	</p>
+	<p>Text to check for:
+	<input type="text" name="text" value="" />
+	</p>
+	<p>Invert match (get emailed when the text disappears) 
+	<input type="checkbox" name="invert" />
+	</p>
+	<p>
+	<button type="submit" class="btn btn-success">Save</button>
+	<a class="btn" href="/dashboard">Cancel</a>
+	</p>
+</form>
+
+{% include 'includes/footer.html.twig' %}
+
