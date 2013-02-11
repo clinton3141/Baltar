@@ -1,7 +1,6 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Request;
-
 use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\FormServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
@@ -9,26 +8,25 @@ use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
+use Igorw\Silex\ConfigServiceProvider;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $app = new Silex\Application();
 
 // service providers
+$env = getenv('APP_ENV') ?: 'prod';
+$app->register(new ConfigServiceProvider(__DIR__ . "/../config/$env.yml"));
+
 $app->register(new FormServiceProvider());
+
 $app->register(new TranslationServiceProvider());
+
 $app->register(new UrlGeneratorServiceProvider());
+
 $app->register(new SessionServiceProvider());
 
-$app->register(new DoctrineServiceProvider(), array(
-	'db.options' => array (
-		'driver' => 'pdo_mysql',
-		'dbhost' => 'localhost',
-		'dbname' => 'seer',
-		'user' => 'seer',
-		'password' => 'KyFdaqBFVyyLRSXV'
-	)
-));
+$app->register(new DoctrineServiceProvider());
 
 $app->register(new SecurityServiceProvider(), array(
 	'security.firewalls' => array (
