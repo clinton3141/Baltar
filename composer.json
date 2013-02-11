@@ -9,7 +9,9 @@
 		"symfony/twig-bridge": "2.1.*",
 		"symfony/translation": "2.1.*",
 		"symfony/validator": "2.1.*",
-		"twig/twig": "1.*"
+		"symfony/yaml": "2.1.*",
+		"twig/twig": "1.*",
+		"igorw/config-service-provider": "1.*"
 	},
 	"autoload": {
 		"psr-0": {

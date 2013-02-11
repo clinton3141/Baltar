@@ -1,0 +1,8 @@
+db.options:
+        driver: pdo_mysql
+        dbhost: localhost
+        user: username
+        password: password
+        dbname: db
+
+debug: false
