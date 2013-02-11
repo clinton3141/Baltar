@@ -2,9 +2,27 @@
 
 <h1>Your checkers</h1>
 
+<h2>Active</h2>
+
+<p>These will run every minute until the checker thinks that it's found what you were looking for or you disable them.</p>
+
 <ul>
 	{% for checker in checkers %}
+	{% if checker.is_active %}
 	<li><a href="/dashboard/view/{{ checker.id }}">{{ checker.name }}</a></li>
+	{% endif %}
+	{% endfor %}
+</ul>
+
+<h2>NOT active</h2>
+
+<p>Checkers are automatically disabled when they think that they've found what you wanted. You can re-enable them at any time!</p>
+
+<ul>
+	{% for checker in checkers %}
+	{% if not checker.is_active %}
+	<li><a href="/dashboard/view/{{ checker.id }}">{{ checker.name }}</a></li>
+	{% endif %}
 	{% endfor %}
 </ul>
 
