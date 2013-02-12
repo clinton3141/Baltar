@@ -75,10 +75,10 @@ $app->get('/', function () use ($app) {
 });
 
 $app->get('/dashboard', function() use ($app) {
-	$username = $app['security']->getToken()->getUser()->getUserName();
+	$user = $app['security']->getToken()->getUser();
 
 	try {
-		$checkers = $app['checkers']->getCheckersByUserName($username);
+		$checkers = $app['checkers']->getCheckersByUser($user);
 	} catch (Seer\Checker\CheckerNotFoundException $e) {
 		$checkers = array ();
 	}
@@ -89,10 +89,10 @@ $app->get('/dashboard', function() use ($app) {
 });
 
 $app->get('/dashboard/view/{id}', function($id) use ($app) {
-	$username = $app['security']->getToken()->getUser()->getUserName();
+	$user = $app['security']->getToken()->getUser();
 
 	try {
-		$checker = $app['checkers']->getCheckerByIdAndUserName($id, $username);
+		$checker = $app['checkers']->getCheckerByIdAndUser($id, $user);
 	} catch (Exception $e) {
 		return "You don't have access to this page.";
 	}
@@ -114,12 +114,12 @@ $app->get('/account/logout', function() use ($app) {
 $app->post('/dashboard/checker/save', function (Request $request) use ($app) {
 	// TODO: if (checker->belongsTo(user))
 	// $checker->update()
-	$username = $app['security']->getToken()->getUser()->getUserName();
+	$user= $app['security']->getToken()->getUser();
 
 	if ($request->get('id') !== null) {
-		$checker = $app['checkers']->getCheckerByIdAndUserName($request->get('id'), $username);
+		$checker = $app['checkers']->getCheckerByIdAndUser ($request->get('id'), $user);
 	} else {
-		$checker = $app['checkers']->createCheckerForUserName ($username);
+		$checker = $app['checkers']->createCheckerForUser($user);
 	}
 
 	$checker->name = $request->get('name');
@@ -134,8 +134,8 @@ $app->post('/dashboard/checker/save', function (Request $request) use ($app) {
 });
 
 $app->get('/dashboard/checker/delete/{id}', function ($id) use ($app) {
-	$username = $app['security']->getToken()->getUser()->getUserName();
-	$checker = $app['checkers']->getCheckerByIdAndUserName($id, $username);
+	$user= $app['security']->getToken()->getUser();
+	$checker = $app['checkers']->getCheckerByIdAndUser ($id, $user);
 
 	return $app['twig']->render('delete-checker.html.twig', array (
 		'checker' => $checker
@@ -143,9 +143,9 @@ $app->get('/dashboard/checker/delete/{id}', function ($id) use ($app) {
 });
 
 $app->post('/dashboard/checker/delete/{id}', function(Request $request, $id) use ($app) {
-	$username = $app['security']->getToken()->getUser()->getUserName();
+	$user = $app['security']->getToken()->getUser();
 	if ($request->get('submit') === 'yes') {
-		$checker = $app['checkers']->getCheckerByIdAndUserName($id, $username);
+		$checker = $app['checkers']->getCheckerByIdAndUser ($id, $user);
 		$app['db']->delete('checkers', array('id' => $checker->id()));
 	}
 	return $app->redirect('/dashboard');
@@ -160,13 +160,13 @@ $app->get('/dashboard/profile', function () use ($app) {
 
 $app->post('/dashboard/profile/save', function (Request $request) use ($app) {
 	if ($request->get('password')) {
-		$username = $app['security']->getToken()->getUser()->getUserName();
+		$user = $app['security']->getToken()->getUser();
 
 		$password = $app['security.encoder.digest']->encodePassword($request->get('password'), '');
 		$app['db']->update('users', array(
 			'password' => $password
 		), array (
-			'username' => $username
+			'id' => $user->getId()
 		));
 	}
 	return $app->redirect('/dashboard');
