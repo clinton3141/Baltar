@@ -4,7 +4,7 @@ namespace Seer\User;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\User;
+//use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Doctrine\DBAL\Connection;
@@ -22,7 +22,7 @@ class UserProvider implements UserProviderInterface
 		if (!$user = $query->fetch()) {
 			throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
 		}
-		return new User($user['username'], $user['password'], explode(',', $user['roles']), true, true, true, true);
+		return new User($user['id'], $user['username'], $user['password'], '', explode(',', $user['roles']));
 	}
 
 	public function refreshUser (UserInterface $user) {
@@ -33,6 +33,6 @@ class UserProvider implements UserProviderInterface
 	}
 
 	public function supportsClass($class) {
-		return $class === 'Symfony\Component\Security\Core\User\User';
+		return $class === 'Seer\User\User';
 	}
 }
