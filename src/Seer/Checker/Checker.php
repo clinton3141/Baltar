@@ -60,10 +60,18 @@ class Checker
 		return $this->user_id == $user_id;
 	}
 
+	public function __get ($key) {
+		if ($key === 'host') {
+			$url = parse_url($this->url);
+			return $url['host'];
+		}
+	}
+
 	public function save ($conn) {
 		if ($this->id) {
 			$conn->update('checkers', array(
 					'name' => $this->name,
+					'host' => $this->host,
 					'url' => $this->url,
 					'text' => $this->text,
 					'invert' => $this->invert,
@@ -75,6 +83,7 @@ class Checker
 		} else {
 			$conn->insert('checkers', array(
 				'user_id' => $this->user_id,
+				'host' => $this->host,
 				'name' => $this->name,
 				'url' => $this->url,
 				'text' => $this->text,
