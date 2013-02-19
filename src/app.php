@@ -159,15 +159,26 @@ $app->get('/dashboard/profile', function () use ($app) {
 });
 
 $app->post('/dashboard/profile/save', function (Request $request) use ($app) {
+	$user = $app['security']->getToken()->getUser();
 	if ($request->get('password')) {
-		$user = $app['security']->getToken()->getUser();
 
 		$password = $app['security.encoder.digest']->encodePassword($request->get('password'), '');
+		$email = $request->get('email');
 		$app['db']->update('users', array(
 			'password' => $password
 		), array (
 			'id' => $user->getId()
 		));
+	}
+	if ($request->get('email')) {
+		$email = $request->get('email');
+		if ($email !== $user->getEmail()) {
+			$app['db']->update('users', array(
+				'email' => $email
+			), array (
+				'id' => $user->getID()
+			));
+		}
 	}
 	return $app->redirect('/dashboard');
 });
