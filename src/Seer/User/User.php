@@ -7,18 +7,25 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface
 {
 	private $username;
+	private $email;
 	private $salt;
 	private $password;
 	private $roles;
 	private $id;
 
-	public function __construct ($id, $username, $password, $salt, array $roles)
+	public function __construct ($id, $username, $email, $password, $salt, array $roles)
 	{
 		$this->id = $id;
+		$this->email = $email;
 		$this->username = $username;
 		$this->password = $password;
 		$this->salt = $salt;
 		$this->roles = $roles;
+	}
+
+	public function getEmail ()
+	{
+		return $this->email;
 	}
 
 	public function getRoles ()

@@ -22,7 +22,7 @@ class UserProvider implements UserProviderInterface
 		if (!$user = $query->fetch()) {
 			throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
 		}
-		return new User($user['id'], $user['username'], $user['password'], '', explode(',', $user['roles']));
+		return new User($user['id'], $user['username'], $user['email'], $user['password'], '', explode(',', $user['roles']));
 	}
 
 	public function refreshUser (UserInterface $user) {
